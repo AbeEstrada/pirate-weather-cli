@@ -89,7 +89,7 @@ func main() {
 		return
 	}
 
-	url := fmt.Sprintf("https://api.pirateweather.net/forecast/%s/%.6f,%.6f?units=%s",
+	url := fmt.Sprintf("https://api.pirateweather.net/forecast/%s/%.6f,%.6f?units=%s&exclude=minutely,hourly,alerts",
 		apiKey, *lat, *lon, *units)
 
 	resp, err := http.Get(url)
