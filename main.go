@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 type WeatherResponse struct {
@@ -26,7 +27,9 @@ type WeatherResponse struct {
 	} `json:"currently"`
 	Daily struct {
 		Data []struct {
-			MoonPhase float64 `json:"moonPhase"`
+			MoonPhase   float64 `json:"moonPhase"`
+			SunriseTime int     `json:"sunriseTime"`
+			SunsetTime  int     `json:"sunsetTime"`
 		} `json:"data"`
 	} `json:"daily"`
 }
@@ -62,6 +65,15 @@ func getMoonPhaseEmoji(moonPhase float64) string {
 	default:
 		return "🌘" // waning crescent
 	}
+}
+
+func formatTime(timestamp int, timezone string) string {
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return "N/A"
+	}
+	t := time.Unix(int64(timestamp), 0).In(loc)
+	return t.Format("3:04 PM")
 }
 
 func main() {
@@ -144,9 +156,14 @@ func main() {
 		windUnit = "km/h"
 	}
 
+	sunrise := formatTime(weather.Daily.Data[0].SunriseTime, weather.Timezone)
+	sunset := formatTime(weather.Daily.Data[0].SunsetTime, weather.Timezone)
+
 	fmt.Printf("Pirate Weather\n")
 	fmt.Printf("%.6f,%.6f (%s)\n", *lat, *lon, weather.Timezone)
 	fmt.Printf("%s %s\n", icon, weather.Currently.Summary)
+	fmt.Printf("🌅 Sunrise:     %s\n", sunrise)
+	fmt.Printf("🌇 Sunset:      %s\n", sunset)
 	fmt.Printf("Temperature:    %.1f%s\n", weather.Currently.Temperature, tempUnit)
 	fmt.Printf("Feels Like:     %.1f%s\n", weather.Currently.ApparentTemperature, tempUnit)
 	fmt.Printf("Precip Chance:  %.0f%%\n", weather.Currently.PrecipProbability*100)
