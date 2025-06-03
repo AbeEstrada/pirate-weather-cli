@@ -24,6 +24,11 @@ type WeatherResponse struct {
 		WindSpeed           float64 `json:"windSpeed"`
 		Humidity            float64 `json:"humidity"`
 	} `json:"currently"`
+	Daily struct {
+		Data []struct {
+			MoonPhase float64 `json:"moonPhase"`
+		} `json:"data"`
+	} `json:"daily"`
 }
 
 func getFloatFromEnv(envVar string, defaultValue float64) float64 {
@@ -36,6 +41,27 @@ func getFloatFromEnv(envVar string, defaultValue float64) float64 {
 		return defaultValue
 	}
 	return f
+}
+
+func getMoonPhaseEmoji(moonPhase float64) string {
+	switch {
+	case moonPhase < 0.125:
+		return "🌑" // new moon
+	case moonPhase < 0.25:
+		return "🌒" // waxing crescent
+	case moonPhase < 0.375:
+		return "🌓" // first quarter
+	case moonPhase < 0.5:
+		return "🌔" // waxing gibbous
+	case moonPhase < 0.625:
+		return "🌕" // full moon
+	case moonPhase < 0.75:
+		return "🌖" // waning gibbous
+	case moonPhase < 0.875:
+		return "🌗" // last quarter
+	default:
+		return "🌘" // waning crescent
+	}
 }
 
 func main() {
@@ -87,15 +113,15 @@ func main() {
 
 	emoji := map[string]string{
 		"clear-day":           "☀️",
-		"clear-night":         "🌙",
+		"clear-night":         getMoonPhaseEmoji(weather.Daily.Data[0].MoonPhase),
 		"rain":                "🌧️",
-		"snow":                "❄️",
+		"snow":                "🌨️",
 		"sleet":               "🌨️",
 		"wind":                "🌬️",
 		"fog":                 "🌫️",
 		"cloudy":              "☁️",
-		"partly-cloudy-day":   "⛅",
-		"partly-cloudy-night": "☁️🌙",
+		"partly-cloudy-day":   "🌤️",
+		"partly-cloudy-night": "☁️",
 		"thunderstorm":        "⛈️",
 		"hail":                "🌨️",
 		"none":                "🏴‍☠️",
