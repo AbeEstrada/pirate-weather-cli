@@ -2,6 +2,17 @@
 
 A minimal CLI for the [Pirate Weather API](https://pirateweather.net/)
 
+## Build and Installation
+
+This project uses [`just`](https://github.com/casey/just) as a command runner. Below are the available commands:
+
+### Available Commands
+
+- `just` or `just install` - Build and install the binary to `PREFIX/bin/` (default: `/usr/local/bin`)
+- `just build` - Build the binary in the current directory
+- `just uninstall` - Remove the installed binary
+- `just clean` - Remove the built binary from the current directory
+
 ## Usage
 
 ```sh
