@@ -4,7 +4,7 @@ A minimal CLI for the [Pirate Weather API](https://pirateweather.net/)
 
 ## Build and Installation
 
-This project uses [`just`](https://github.com/casey/just) as a command runner. Below are the available commands:
+This project uses [`just`](https://github.com/casey/just) as a command runner and requires [Go](https://golang.org/) for building. Below are the available commands:
 
 ### Available Commands
 
