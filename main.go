@@ -150,24 +150,24 @@ func main() {
 	}
 
 	windUnit := "mph"
-	if *units == "si" {
+	switch *units {
+	case "si":
 		windUnit = "m/s"
-	} else if *units == "ca" {
+	case "ca":
 		windUnit = "km/h"
 	}
 
 	sunrise := formatTime(weather.Daily.Data[0].SunriseTime, weather.Timezone)
 	sunset := formatTime(weather.Daily.Data[0].SunsetTime, weather.Timezone)
 
-	fmt.Printf("Pirate Weather\n")
-	fmt.Printf("📍 %.6f,%.6f\n", *lat, *lon)
-	// fmt.Printf("🕰️ %s\n", weather.Timezone)
+	fmt.Printf("%.6f,%.6f\n", *lat, *lon)
+	// fmt.Printf("%s\n", weather.Timezone)
 	fmt.Printf("%s %s\n", icon, weather.Currently.Summary)
-	fmt.Printf("🌅 Sunrise:        %s\n", sunrise)
-	fmt.Printf("🌇 Sunset:         %s\n", sunset)
-	fmt.Printf("🌡️ Temperature:    %.1f%s\n", weather.Currently.Temperature, tempUnit)
-	fmt.Printf("🌡️ Feels Like:     %.1f%s\n", weather.Currently.ApparentTemperature, tempUnit)
-	fmt.Printf("☔️ Precip Chance:  %.0f%%\n", weather.Currently.PrecipProbability*100)
-	fmt.Printf("💧 Humidity:       %.0f%%\n", weather.Currently.Humidity*100)
-	fmt.Printf("💨 Wind Speed:     %.1f %s\n", weather.Currently.WindSpeed, windUnit)
+	fmt.Printf("Current:     %.1f%s\n", weather.Currently.Temperature, tempUnit)
+	fmt.Printf("Feels Like:  %.1f%s\n", weather.Currently.ApparentTemperature, tempUnit)
+	fmt.Printf("Precip:      %.0f%%\n", weather.Currently.PrecipProbability*100)
+	fmt.Printf("Humidity:    %.0f%%\n", weather.Currently.Humidity*100)
+	fmt.Printf("Wind:        %.1f %s\n", weather.Currently.WindSpeed, windUnit)
+	fmt.Printf("Sunrise:     %s\n", sunrise)
+	fmt.Printf("Sunset:      %s\n", sunset)
 }
