@@ -16,14 +16,14 @@ type WeatherResponse struct {
 	Longitude float64 `json:"longitude"`
 	Timezone  string  `json:"timezone"`
 	Currently struct {
-		Icon                string  `json:"icon"`
-		Time                int     `json:"time"`
-		Summary             string  `json:"summary"`
-		Temperature         float64 `json:"temperature"`
-		ApparentTemperature float64 `json:"apparentTemperature"`
-		PrecipProbability   float64 `json:"precipProbability"`
-		WindSpeed           float64 `json:"windSpeed"`
-		Humidity            float64 `json:"humidity"`
+		Icon              string  `json:"icon"`
+		Time              int     `json:"time"`
+		Summary           string  `json:"summary"`
+		Temperature       float64 `json:"temperature"`
+		PrecipProbability float64 `json:"precipProbability"`
+		WindSpeed         float64 `json:"windSpeed"`
+		WindBearing       int     `json:"windBearing"`
+		Humidity          float64 `json:"humidity"`
 	} `json:"currently"`
 	Daily struct {
 		Data []struct {
@@ -65,6 +65,18 @@ func getMoonPhaseEmoji(moonPhase float64) string {
 	default:
 		return "🌘" // waning crescent
 	}
+}
+
+func DegreesToArrow(degrees int) string {
+	normalized := (degrees%360 + 360) % 360
+	arrows := []string{"↑", "↗", "→", "↘", "↓", "↙", "←", "↖", "↑"}
+	degreeRanges := []float64{22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5, 360}
+	for i, maxDegree := range degreeRanges {
+		if float64(normalized) < maxDegree {
+			return arrows[i]
+		}
+	}
+	return "↑"
 }
 
 func formatTime(timestamp int, timezone string) string {
@@ -156,18 +168,17 @@ func main() {
 	case "ca":
 		windUnit = "km/h"
 	}
+	windDirection := DegreesToArrow(weather.Currently.WindBearing)
 
 	sunrise := formatTime(weather.Daily.Data[0].SunriseTime, weather.Timezone)
 	sunset := formatTime(weather.Daily.Data[0].SunsetTime, weather.Timezone)
 
 	fmt.Printf("%.6f,%.6f\n", *lat, *lon)
-	// fmt.Printf("%s\n", weather.Timezone)
-	fmt.Printf("%s %s\n", icon, weather.Currently.Summary)
-	fmt.Printf("Current:     %.1f%s\n", weather.Currently.Temperature, tempUnit)
-	fmt.Printf("Feels Like:  %.1f%s\n", weather.Currently.ApparentTemperature, tempUnit)
-	fmt.Printf("Precip:      %.0f%%\n", weather.Currently.PrecipProbability*100)
-	fmt.Printf("Humidity:    %.0f%%\n", weather.Currently.Humidity*100)
-	fmt.Printf("Wind:        %.1f %s\n", weather.Currently.WindSpeed, windUnit)
-	fmt.Printf("Sunrise:     %s\n", sunrise)
-	fmt.Printf("Sunset:      %s\n", sunset)
+	fmt.Printf("Weather   %s %s\n", icon, weather.Currently.Summary)
+	fmt.Printf("Temp      %.1f%s\n", weather.Currently.Temperature, tempUnit)
+	fmt.Printf("Precip    %.0f%%\n", weather.Currently.PrecipProbability*100)
+	fmt.Printf("Humidity  %.0f%%\n", weather.Currently.Humidity*100)
+	fmt.Printf("Wind      %.1f %s %s\n", weather.Currently.WindSpeed, windUnit, windDirection)
+	fmt.Printf("Sunrise   %s\n", sunrise)
+	fmt.Printf("Sunset    %s\n", sunset)
 }
